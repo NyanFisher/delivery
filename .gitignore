@@ -116,3 +116,19 @@ docker-compose.dev.yml
 
 # === OS системные ===
 Thumbs.db
+
+*.pyc
+__pycache__/*
+*.swp
+*.map
+.python-version
+htmlcov/
+coverage.xml
+pytest.xml
+venv/
+.venv/
+.env
+log/*
+/.idea/
+/.vscode/
+*_cache/
