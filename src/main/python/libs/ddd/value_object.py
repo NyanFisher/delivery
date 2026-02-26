@@ -4,12 +4,12 @@ from decimal import Decimal
 from typing import Any
 
 
-class ValueObject[T, V: (int, float, str, bool, Decimal)](ABC):
+class ValueObject[T](ABC):
     @abstractmethod
-    def equality_components(self) -> Iterable[Any]: ...
+    def _equality_components(self) -> Iterable[Any]: ...
 
     @staticmethod
-    def _safe_compare(a: V, b: V) -> int:  # noqa: PLR0911
+    def _safe_compare[V: (int, float, str, bool, Decimal)](a: V, b: V) -> int:  # noqa: PLR0911
         if a == b:
             return 0
         if a is None:
@@ -36,8 +36,8 @@ class ValueObject[T, V: (int, float, str, bool, Decimal)](ABC):
         if self is other:
             return True
 
-        this_components = list(self.equality_components())
-        that_components = list(other.equality_components())
+        this_components = list(self._equality_components())
+        that_components = list(other._equality_components())
 
         if len(this_components) != len(that_components):
             return False
@@ -45,14 +45,14 @@ class ValueObject[T, V: (int, float, str, bool, Decimal)](ABC):
         return all(component == that_components[i] for i, component in enumerate(this_components))
 
     def __hash__(self) -> int:
-        return hash(tuple(self.equality_components()))
+        return hash(tuple(self._equality_components()))
 
     def __lt__(self, other: T) -> bool:
         if not isinstance(other, ValueObject):
             return NotImplemented
 
-        this_components = list(self.equality_components())
-        other_components = list(other.equality_components())
+        this_components = list(self._equality_components())
+        other_components = list(other._equality_components())
 
         for i in range(min(len(this_components), len(other_components))):
             result = self._safe_compare(this_components[i], other_components[i])
@@ -62,6 +62,6 @@ class ValueObject[T, V: (int, float, str, bool, Decimal)](ABC):
         return len(this_components) < len(other_components)
 
     def __str__(self) -> str:
-        components = list(self.equality_components())
+        components = list(self._equality_components())
         components_str = ", ".join(str(component) for component in components)
         return f"{self.__class__.__name__}[{components_str}]"
