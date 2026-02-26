@@ -1,29 +1,17 @@
 import typing
-from collections.abc import Iterable
+from dataclasses import dataclass, field
 
-from libs.ddd.value_object import ValueObject
 from libs.errs.guard import Error, Guard
 from libs.errs.result import Result
 
 
-class Location(ValueObject["Location"]):
-    MIN_VALUE: typing.Final = 1
-    MAX_VALUE: typing.Final = 10
+@dataclass(frozen=True)
+class Location:
+    MIN_VALUE: typing.Final[int] = field(default=1, init=False, repr=False, compare=False)
+    MAX_VALUE: typing.Final[int] = field(default=10, init=False, repr=False, compare=False)
 
-    def __init__(self, x: int, y: int) -> None:
-        self._x = x
-        self._y = y
-
-    def __repr__(self) -> str:
-        return f"Location(x={self.x}, y={self.y})"
-
-    @property
-    def x(self) -> int:
-        return self._x
-
-    @property
-    def y(self) -> int:
-        return self._y
+    x: int
+    y: int
 
     @classmethod
     def create(cls, x: int, y: int) -> Result[typing.Self, Error]:
@@ -36,6 +24,3 @@ class Location(ValueObject["Location"]):
 
     def distance_to(self, location: "Location") -> int:
         return abs(self.x - location.x) + abs(self.y - location.y)
-
-    def _equality_components(self) -> Iterable[int]:
-        return (self.x, self.y)

@@ -42,5 +42,4 @@ class TestLocation:
 
         result = courier_location.distance_to(home_location)
 
-        assert result.is_success
-        assert result.value == expected
+        assert result == expected
