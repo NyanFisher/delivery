@@ -37,13 +37,13 @@ class Guard[T: (int, float, str, bool, Decimal)]:
     @staticmethod
     def against_greater_than(value: T | None, max_value: T, param_name: str) -> Error | None:
         if value is None or value > max_value:
-            return GeneralErrors.value_must_be_less_than(param_name, value, max_value)
+            return GeneralErrors.value_must_be_less_or_equal(param_name, value, max_value)
         return None
 
     @staticmethod
     def against_greater_or_equal(value: T | None, max_value: T, param_name: str) -> Error | None:
         if value is None or value >= max_value:
-            return GeneralErrors.value_must_be_less_or_equal(param_name, value, max_value)
+            return GeneralErrors.value_must_be_less_than(param_name, value, max_value)
         return None
 
     @staticmethod
@@ -55,7 +55,7 @@ class Guard[T: (int, float, str, bool, Decimal)]:
     @staticmethod
     def against_less_or_equal(value: T | None, min_value: T, param_name: str) -> Error | None:
         if value is None or value <= min_value:
-            return GeneralErrors.value_must_be_greater_or_equal(param_name, value, min_value)
+            return GeneralErrors.value_must_be_greater_than(param_name, value, min_value)
         return None
 
     @staticmethod

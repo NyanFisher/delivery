@@ -35,12 +35,14 @@ class Result[T, E: Error]:
     def is_failure(self) -> bool:
         return not self._is_success
 
-    def get_value(self) -> T:
+    @property
+    def value(self) -> T:
         if not self._is_success:
             raise RuntimeError("Cannot get value from failure")
         return cast("T", self._value)
 
-    def get_error(self) -> E:
+    @property
+    def error(self) -> E:
         if self._is_success:
             raise RuntimeError("Cannot get error from success")
         return cast("E", self._error)
