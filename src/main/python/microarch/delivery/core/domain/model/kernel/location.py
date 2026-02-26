@@ -34,8 +34,8 @@ class Location(ValueObject["Location"]):
 
         return Result.success(cls(x=x, y=y))
 
-    def distance_to(self, location: "Location") -> Result[int, None]:
-        return Result.success(abs(self.x - location.x) + abs(self.y - location.y))
+    def distance_to(self, location: "Location") -> int:
+        return abs(self.x - location.x) + abs(self.y - location.y)
 
     def _equality_components(self) -> Iterable[int]:
         return (self.x, self.y)
