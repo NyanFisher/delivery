@@ -1,7 +1,5 @@
 from typing import Final
 
-from libs.errs.domain_invariant_exception import DomainInvariantError
-
 MIN_LEN_PARTS: Final = 2
 
 
@@ -54,6 +52,11 @@ class Error:
 
     def __repr__(self) -> str:
         return f"Error{{code='{self._code}', message='{self._message}'}}"
+
+
+class DomainInvariantError[**P](Exception):
+    def __init__(self, msg: Error, *args: P.args, **kwargs: P.kwargs) -> None:
+        super().__init__(f"Domain invariant violated: {msg}", *args, **kwargs)
 
 
 class GeneralErrors[T]:

@@ -1,8 +1,7 @@
 from collections.abc import Callable
 from typing import Any, cast
 
-from libs.errs.domain_invariant_exception import DomainInvariantError
-from libs.errs.error import Error
+from libs.errs.error import DomainInvariantError, Error
 from libs.errs.result import Result
 
 
