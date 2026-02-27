@@ -31,27 +31,30 @@ class StoragePlace(BaseEntity[uuid.UUID]):
 
     @property
     def is_occupied(self) -> bool:
-        return self.order_id is None
+        return self.order_id is not None
 
     def can_store(self, volume: int) -> bool:
         return self.order_id is None and volume <= self.total_volume
 
     def store(self, order_id: uuid.UUID, volume: int) -> UnitResult[Error]:
         if self.order_id is not None:
-            return UnitResult.failure(
-                Error("already.contains.another.order", "The storage location already contains another order"),
-            )
-        if err := Guard.against_out_of_range(volume, self.MIN_TOTAL_VOLUME, self.total_volume, "volume"):
+            err = Error("already.contains.another.order", "The storage location already contains another order")
+            return UnitResult.failure(err)
+        if err := Guard.against_null_or_empty_uuid(order_id, "order_id"):  # type: ignore[assignment]
+            return UnitResult.failure(err)
+        if err := Guard.against_out_of_range(volume, self.MIN_TOTAL_VOLUME, self.total_volume, "volume"):  # type: ignore[assignment]
             return UnitResult.failure(err)
 
         self.order_id = order_id
         return UnitResult.success()
 
     def clear(self, order_id: uuid.UUID) -> UnitResult[Error]:
+        if err := Guard.against_null_or_empty_uuid(order_id, "order_id"):
+            return UnitResult.failure(err)
+
         if self.order_id is None or self.order_id != order_id:
-            return UnitResult.failure(
-                Error("order.id.does.not.match", "The order ID does not match the one stored in the storage place"),
-            )
+            err = Error("order.id.does.not.match", "The order ID does not match the one stored in the storage place")
+            return UnitResult.failure(err)
 
         self.order_id = None
         return UnitResult.success()
