@@ -9,7 +9,7 @@ class BaseEntity[TId: Any]:
     def id_(self) -> TId | None:
         return self._id
 
-    def _is_transient(self) -> bool:
+    def is_transient(self) -> bool:
         return self._id is None or self._id == self._default_value()
 
     def _default_value(self) -> TId | None:
@@ -26,7 +26,7 @@ class BaseEntity[TId: Any]:
         if type(self) is not type(other):
             return False
 
-        if self._is_transient() or other._is_transient():
+        if self.is_transient() or other.is_transient():
             return False
 
         return self._id == other._id
@@ -41,7 +41,10 @@ class BaseEntity[TId: Any]:
         if self is other:
             return False
 
-        if self._is_transient() or other._is_transient():
+        if self.is_transient() or other.is_transient():
             return False
 
         return self._id < other._id  # type: ignore[operator]
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(id_={self.id_})"
