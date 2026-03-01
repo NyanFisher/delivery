@@ -1,8 +1,8 @@
 from collections.abc import Callable
 from typing import Any, cast
 
-from libs.errs.error import DomainInvariantError, Error
-from libs.errs.result import Result
+from .error import DomainInvariantError, Error
+from .result import Result
 
 
 class UnitResult[E: Error]:
