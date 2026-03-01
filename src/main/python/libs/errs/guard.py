@@ -3,7 +3,7 @@ import uuid
 from collections.abc import Collection as AbcCollection
 from decimal import Decimal
 
-from libs.errs.error import Error, GeneralErrors
+from .error import Error, GeneralErrors
 
 
 class Guard[T: (int, float, str, bool, Decimal)]:
