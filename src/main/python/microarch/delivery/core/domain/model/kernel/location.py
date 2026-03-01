@@ -1,12 +1,12 @@
 import typing
 from dataclasses import dataclass, field
 
-from libs.errs.guard import Error, Guard
-from libs.errs.result import Result
+from libs.errs import Error, Guard, Result
 
 
 @dataclass(frozen=True)
 class Location:
+    # Do not call the constructor directly. Use the `create` method to create.
     MIN_VALUE: typing.Final[int] = field(default=1, init=False, repr=False, compare=False)
     MAX_VALUE: typing.Final[int] = field(default=10, init=False, repr=False, compare=False)
 
