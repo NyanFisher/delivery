@@ -7,6 +7,7 @@ from libs.errs.guard import Guard
 from libs.errs.unit_result import UnitResult
 
 from microarch.delivery.core.domain.model.kernel.location import Location
+from microarch.delivery.core.domain.model.kernel.volume import Volume
 from microarch.delivery.core.domain.model.order.enums import OrderStatusEnum
 
 if typing.TYPE_CHECKING:
@@ -14,38 +15,51 @@ if typing.TYPE_CHECKING:
 
 
 class Order(Aggregate[uuid.UUID]):
-    MIN_VOLUME: typing.Final = 1
-
-    def __init__(self, order_id: uuid.UUID, location: Location, volume: int) -> None:
+    def __init__(self, order_id: uuid.UUID, location: Location, volume: Volume) -> None:
+        # Do not call the constructor directly. Use the `create` method to create.
         super().__init__(order_id)
-        self.location = location
-        self.volume = volume
-        self.status: OrderStatusEnum | None = None
-        self.courier_id: uuid.UUID | None = None
+        self._location = location
+        self._volume = volume
+        self._status: OrderStatusEnum | None = None
+        self._courier_id: uuid.UUID | None = None
+
+    @property
+    def location(self) -> Location:
+        return self._location
+
+    @property
+    def volume(self) -> Volume:
+        return self._volume
+
+    @property
+    def status(self) -> OrderStatusEnum:
+        return typing.cast("OrderStatusEnum", self._status)
+
+    @property
+    def courier_id(self) -> uuid.UUID | None:
+        return self._courier_id
 
     @classmethod
-    def create(cls, order_id: uuid.UUID, location: Location, volume: int) -> Result[typing.Self, Error]:
+    def create(cls, order_id: uuid.UUID, location: Location, volume: Volume) -> Result[typing.Self, Error]:
         if err := Guard.against_null_or_empty_uuid(order_id, "order_id"):
-            return Result.failure(err)
-        if err := Guard.against_less_than(volume, cls.MIN_VOLUME, "volume"):
             return Result.failure(err)
 
         cls_ = cls(order_id, location, volume)
-        cls_.status = OrderStatusEnum.CREATED
+        cls_._status = OrderStatusEnum.CREATED
 
         return Result.success(cls_)
 
     def assign(self, courier: "Courier") -> UnitResult[Error]:
-        if self.status != OrderStatusEnum.CREATED:
+        if self._status != OrderStatusEnum.CREATED:
             return UnitResult.failure(Error("status.is.not.created", "It is impossible to assign the order"))
 
-        self.courier_id = courier.id_
-        self.status = OrderStatusEnum.ASSIGNED
+        self._courier_id = courier.id_
+        self._status = OrderStatusEnum.ASSIGNED
         return UnitResult.success()
 
     def complete(self) -> UnitResult[Error]:
-        if self.status != OrderStatusEnum.ASSIGNED:
+        if self._status != OrderStatusEnum.ASSIGNED:
             return UnitResult.failure(Error("status.is.not.assigned", "It is impossible to complete the order"))
 
-        self.status = OrderStatusEnum.COMPLETED
+        self._status = OrderStatusEnum.COMPLETED
         return UnitResult.success()

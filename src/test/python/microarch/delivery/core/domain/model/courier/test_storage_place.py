@@ -6,10 +6,7 @@ from microarch.delivery.core.domain.model.courier.storage_place import StoragePl
 from microarch.delivery.core.domain.model.kernel.volume import Volume
 from pytest_mock import MockerFixture
 
-
-def create_volume(value: int) -> Volume:
-    return Volume.create(value).value
-
+from test.python.helpers import create_volume
 
 STORAGE_PLACE_UUID = uuid.uuid4()
 STORAGE_PLACE_NAME = "backpack"

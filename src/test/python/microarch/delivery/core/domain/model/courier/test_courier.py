@@ -3,16 +3,19 @@ import uuid
 import pytest
 from microarch.delivery.core.domain.model.courier import Courier
 from microarch.delivery.core.domain.model.kernel.location import Location
+from microarch.delivery.core.domain.model.kernel.speed import Speed
 from microarch.delivery.core.domain.model.order.order import Order
 
+from test.python.helpers import create_volume
+
 COURIER_NAME = "Олег"
-COURIER_SPEED = 2
+COURIER_SPEED = Speed.create(2).value
 COURIER_LOCATION = Location.create(1, 1).value
 
 STORAGE_PLACE_UUID = uuid.uuid4()
 
 ORDER_LOCATION = Location.create(5, 5).value
-ORDER = Order.create(uuid.uuid4(), ORDER_LOCATION, 5).value
+ORDER = Order.create(uuid.uuid4(), ORDER_LOCATION, create_volume(5)).value
 
 
 class TestCourier:
@@ -20,7 +23,7 @@ class TestCourier:
         self,
         courier: Courier,
         expected_name: str = COURIER_NAME,
-        expected_speed: int = COURIER_SPEED,
+        expected_speed: Speed = COURIER_SPEED,
         expected_location: Location = COURIER_LOCATION,
         expected_len_storage_places: int = 1,
     ) -> None:
@@ -41,27 +44,13 @@ class TestCourier:
         assert result.is_failure
         assert result.error.code == "value.is.required"
 
-    def test_failure_create_if_speed_is_less_than_min_speed(self) -> None:
-        result = Courier.create(name=COURIER_NAME, speed=0, location=COURIER_LOCATION)
-
-        assert result.is_failure
-        assert result.error.code == "value.must.be.greater.or.equal"
-
     def test_success_add_storage_place(self) -> None:
         courier = Courier.create(name=COURIER_NAME, speed=COURIER_SPEED, location=COURIER_LOCATION).value
 
-        result = courier.add_storage_place("new backpack", 20)
+        result = courier.add_storage_place("new backpack", create_volume(20))
 
         assert result.is_success
         self.assert_courier(courier, expected_len_storage_places=2)
-
-    def test_failure_add_storage_place(self) -> None:
-        courier = Courier.create(name=COURIER_NAME, speed=COURIER_SPEED, location=COURIER_LOCATION).value
-
-        result = courier.add_storage_place("torn backpack", 0)
-
-        assert result.is_failure
-        assert result.error.code == "value.must.be.greater.or.equal"
 
     def test_can_take_order(self) -> None:
         courier = Courier.create(name=COURIER_NAME, speed=COURIER_SPEED, location=COURIER_LOCATION).value
@@ -72,7 +61,7 @@ class TestCourier:
 
     def test_failure_can_take_order(self) -> None:
         courier = Courier.create(name=COURIER_NAME, speed=COURIER_SPEED, location=COURIER_LOCATION).value
-        biggest_order = Order.create(uuid.uuid4(), location=ORDER_LOCATION, volume=50).value
+        biggest_order = Order.create(uuid.uuid4(), location=ORDER_LOCATION, volume=create_volume(50)).value
 
         result = courier.can_take_order(biggest_order)
 
@@ -107,7 +96,7 @@ class TestCourier:
     def test_failure_complete_order_if_not_found_storage_by_order_id(self) -> None:
         courier = Courier.create(name=COURIER_NAME, speed=COURIER_SPEED, location=COURIER_LOCATION).value
         courier.take_order(ORDER)
-        other_order = Order.create(uuid.uuid4(), location=ORDER_LOCATION, volume=10).value
+        other_order = Order.create(uuid.uuid4(), location=ORDER_LOCATION, volume=create_volume(10)).value
 
         result = courier.complete_order(other_order)
 
@@ -116,7 +105,7 @@ class TestCourier:
 
     @pytest.mark.parametrize(("speed", "expected"), [(1, 8), (2, 4), (4, 2)])
     def test_calculate_time_to_location(self, speed: int, expected: int) -> None:
-        courier = Courier.create(name=COURIER_NAME, speed=speed, location=COURIER_LOCATION).value
+        courier = Courier.create(name=COURIER_NAME, speed=Speed.create(speed).value, location=COURIER_LOCATION).value
 
         result = courier.calculate_time_to_location(ORDER_LOCATION)
 
