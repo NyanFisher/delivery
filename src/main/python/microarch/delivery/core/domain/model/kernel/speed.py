@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from libs.errs import Error, Guard, Result
 
 
-@dataclass
+@dataclass(frozen=True, order=True)
 class Speed:
     # Do not call the constructor directly. Use the `create` method to create.
     MIN_SPEED: typing.Final[int] = field(default=1, init=False, repr=False, compare=False)
