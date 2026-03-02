@@ -6,7 +6,7 @@ from microarch.delivery.core.domain.model.kernel.location import Location
 from microarch.delivery.core.domain.model.kernel.speed import Speed
 from microarch.delivery.core.domain.model.order.order import Order
 
-from test.python.helpers import create_volume
+from python.helpers import create_volume
 
 COURIER_NAME = "Олег"
 COURIER_SPEED = Speed.create(2).value

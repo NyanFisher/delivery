@@ -7,7 +7,7 @@ from microarch.delivery.core.domain.model.kernel.speed import Speed
 from microarch.delivery.core.domain.model.kernel.volume import Volume
 from microarch.delivery.core.domain.model.order import Order, OrderStatusEnum
 
-from test.python.helpers import create_volume
+from python.helpers import create_volume
 
 BASKET_ID = uuid.uuid4()
 LOCATION = Location.create(1, 1).value
