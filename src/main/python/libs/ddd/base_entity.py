@@ -45,3 +45,6 @@ class BaseEntity[TId: Any]:
             return False
 
         return self._id < other._id  # type: ignore[operator]
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(id_={self.id_})"

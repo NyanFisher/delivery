@@ -1,15 +1,12 @@
 import uuid
 
 import pytest
-from libs.errs.guard import Guard
+from libs.errs import Guard
 from microarch.delivery.core.domain.model.courier.storage_place import StoragePlace
 from microarch.delivery.core.domain.model.kernel.volume import Volume
 from pytest_mock import MockerFixture
 
-
-def create_volume(value: int) -> Volume:
-    return Volume.create(value).value
-
+from python.helpers import create_volume
 
 STORAGE_PLACE_UUID = uuid.uuid4()
 STORAGE_PLACE_NAME = "backpack"
