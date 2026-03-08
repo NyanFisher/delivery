@@ -2,7 +2,7 @@ import typing
 import uuid
 
 from libs.ddd.aggregate import Aggregate
-from libs.errs import Error, Result, GeneralErrors, Guard, UnitResult
+from libs.errs import Error, GeneralErrors, Guard, Result, UnitResult
 
 from microarch.delivery.core.domain.model.courier.storage_place import StoragePlace
 from microarch.delivery.core.domain.model.kernel.location import Location
