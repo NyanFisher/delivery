@@ -15,14 +15,14 @@ if typing.TYPE_CHECKING:
 class Order(Aggregate[uuid.UUID]):
     def __init__(
         self,
-        order_id: uuid.UUID,
+        id_: uuid.UUID,
         location: Location,
         volume: Volume,
         status: OrderStatusEnum | None = None,
         courier_id: uuid.UUID | None = None,
     ) -> None:
         # Do not call the constructor directly. Use the `create` method to create.
-        super().__init__(order_id)
+        super().__init__(id_)
         self._location = location
         self._volume = volume
         self._status = status

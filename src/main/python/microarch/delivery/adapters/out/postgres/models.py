@@ -27,7 +27,7 @@ class OrderModel(BaseModel):
 
     def to_entity(self) -> Order:
         return Order(
-            order_id=self.id_,
+            id_=self.id_,
             location=Location(self.location_x, self.location_y),
             volume=Volume(self.volume),
             status=self.status,
