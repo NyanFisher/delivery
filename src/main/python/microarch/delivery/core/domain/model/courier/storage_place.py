@@ -12,12 +12,14 @@ class StoragePlace(BaseEntity[uuid.UUID]):
         self,
         name: str,
         total_volume: Volume,
+        id_: uuid.UUID | None = None,
+        order_id: uuid.UUID | None = None,
     ) -> None:
         # Do not call the constructor directly. Use the `create` method to create.
-        super().__init__(uuid.uuid4())
+        super().__init__(id_ or uuid.uuid4())
         self._name = name
         self._total_volume = total_volume
-        self._order_id: uuid.UUID | None = None
+        self._order_id = order_id
 
     @property
     def name(self) -> str:

@@ -13,13 +13,20 @@ if typing.TYPE_CHECKING:
 
 
 class Order(Aggregate[uuid.UUID]):
-    def __init__(self, order_id: uuid.UUID, location: Location, volume: Volume) -> None:
+    def __init__(
+        self,
+        order_id: uuid.UUID,
+        location: Location,
+        volume: Volume,
+        status: OrderStatusEnum | None = None,
+        courier_id: uuid.UUID | None = None,
+    ) -> None:
         # Do not call the constructor directly. Use the `create` method to create.
         super().__init__(order_id)
         self._location = location
         self._volume = volume
-        self._status: OrderStatusEnum | None = None
-        self._courier_id: uuid.UUID | None = None
+        self._status = status
+        self._courier_id = courier_id
 
     @property
     def location(self) -> Location:
@@ -42,8 +49,7 @@ class Order(Aggregate[uuid.UUID]):
         if err := Guard.against_null_or_empty_uuid(order_id, "order_id"):
             return Result.failure(err)
 
-        cls_ = cls(order_id, location, volume)
-        cls_._status = OrderStatusEnum.CREATED
+        cls_ = cls(order_id, location, volume, OrderStatusEnum.CREATED)
 
         return Result.success(cls_)
 

@@ -14,13 +14,20 @@ if typing.TYPE_CHECKING:
 
 
 class Courier(Aggregate[uuid.UUID]):
-    def __init__(self, name: str, speed: Speed, location: Location) -> None:
+    def __init__(
+        self,
+        name: str,
+        speed: Speed,
+        location: Location,
+        id_: uuid.UUID | None = None,
+        storage_places: list[StoragePlace] | None = None
+    ) -> None:
         # Do not call the constructor directly. Use the `create` method to create.
-        super().__init__(uuid.uuid4())
+        super().__init__(id_ or uuid.uuid4())
         self._name = name
         self._speed = speed
         self._location = location
-        self._storage_places: list[StoragePlace] = []
+        self._storage_places = storage_places or []
 
     @property
     def name(self) -> str:
