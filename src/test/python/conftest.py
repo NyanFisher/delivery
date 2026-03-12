@@ -1,12 +1,10 @@
-from collections.abc import Generator
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
+
+import pytest
+from microarch.delivery.adapters.out.postgres.models import BaseModel
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.postgres import PostgresContainer
-
-import pytest
-
-from microarch.delivery.adapters.out.postgres.models import BaseModel
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -18,6 +16,7 @@ def postgres_container() -> Generator[PostgresContainer]:
             BaseModel.metadata.create_all(conn)
         yield postgres
         engine.dispose()
+
 
 @pytest.fixture
 async def async_session(postgres_container: PostgresContainer) -> AsyncGenerator[AsyncSession]:

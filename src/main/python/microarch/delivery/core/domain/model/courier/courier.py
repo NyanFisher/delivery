@@ -20,7 +20,7 @@ class Courier(Aggregate[uuid.UUID]):
         speed: Speed,
         location: Location,
         id_: uuid.UUID | None = None,
-        storage_places: list[StoragePlace] | None = None
+        storage_places: list[StoragePlace] | None = None,
     ) -> None:
         # Do not call the constructor directly. Use the `create` method to create.
         super().__init__(id_ or uuid.uuid4())

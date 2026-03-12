@@ -4,13 +4,11 @@ import uuid
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-from microarch.delivery.core.domain.model.courier.courier import Courier
-from microarch.delivery.core.domain.model.courier.storage_place import StoragePlace
+from microarch.delivery.core.domain.model.courier import Courier, StoragePlace
 from microarch.delivery.core.domain.model.kernel.location import Location
 from microarch.delivery.core.domain.model.kernel.speed import Speed
 from microarch.delivery.core.domain.model.kernel.volume import Volume
-from microarch.delivery.core.domain.model.order.enums import OrderStatusEnum
-from microarch.delivery.core.domain.model.order.order import Order
+from microarch.delivery.core.domain.model.order import Order, OrderStatusEnum
 
 
 class BaseModel(DeclarativeBase): ...
@@ -69,12 +67,7 @@ class StoragePlaceModel(BaseModel):
 
     @classmethod
     def from_entity(cls, entity: StoragePlace) -> typing.Self:
-        return cls(
-            id_=entity.id_,
-            name=entity.name,
-            volume=entity.total_volume.value,
-            order_id=entity.order_id
-        )
+        return cls(id_=entity.id_, name=entity.name, volume=entity.total_volume.value, order_id=entity.order_id)
 
 
 class CourierModel(BaseModel):
@@ -86,7 +79,7 @@ class CourierModel(BaseModel):
     location_x: Mapped[int]
     location_y: Mapped[int]
 
-    storage_places: Mapped[list["StoragePlaceModel"]] = relationship(back_populates="courier")
+    storage_places: Mapped[list["StoragePlaceModel"]] = relationship(back_populates="courier", lazy="selectin")
 
     def to_entity(self) -> Courier:
         return Courier(
@@ -94,7 +87,7 @@ class CourierModel(BaseModel):
             name=self.name,
             speed=Speed(self.speed),
             location=Location(self.location_x, self.location_y),
-            storage_places=[storage_place.to_entity() for storage_place in self.storage_places]
+            storage_places=[storage_place.to_entity() for storage_place in self.storage_places],
         )
 
     @classmethod
@@ -105,5 +98,5 @@ class CourierModel(BaseModel):
             speed=entity.speed.value,
             location_x=entity.location.x,
             location_y=entity.location.y,
-            storage_places=[StoragePlaceModel.from_entity(storage_place) for storage_place in entity.storage_places]
+            storage_places=[StoragePlaceModel.from_entity(storage_place) for storage_place in entity.storage_places],
         )

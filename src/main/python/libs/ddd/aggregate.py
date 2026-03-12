@@ -10,6 +10,9 @@ class Aggregate[TId](ABC, BaseEntity[TId], AggregateRoot[TId]):
         super().__init__(id_)
         self._domain_events: list[DomainEvent] = []
 
+    def get_id(self) -> TId:
+        return self.id_  # type: ignore[override,return-value]
+
     def get_domain_events(self) -> list[DomainEvent]:
         return self._domain_events.copy()
 
