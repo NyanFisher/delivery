@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from microarch.delivery.adapters.out.postgres.models import OrderModel
 from microarch.delivery.core.domain.model.order.enums import OrderStatusEnum
 from microarch.delivery.core.domain.model.order.order import Order
-from microarch.delivery.core.ports.order_repository import IOrderrepository
+from microarch.delivery.core.ports.order_repository import IOrderRepository
 
 
-class SqlAlchemyOrderRepository(IOrderrepository):
+class SqlAlchemyOrderRepository(IOrderRepository):
     def __init__(self, async_session: AsyncSession) -> None:
         self._async_session = async_session
 
